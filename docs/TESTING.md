@@ -1,15 +1,24 @@
 # Testing
 
-## Quality Gates
+## Baseline Gates
 
-- `python -m vibe_coding_infra check`
-- `python -m vibe_coding_infra knowledge-search "执行切片"`
-- `python -m unittest discover -s tests`
+```powershell
+python -m vibe_coding_infra check
+python -m unittest discover -s tests
+```
 
-## Evidence
+## Knowledge Smoke Checks
 
-测试结果写入 `docs/ai/reports/TEST_REPORT.md`。
+```powershell
+python -m vibe_coding_infra knowledge-import
+python -m vibe_coding_infra knowledge-search "质量门禁" --limit 3
+python -m vibe_coding_infra knowledge-answer "下一步之前要读取什么？" --limit 3
+```
 
 ## Completion Rule
 
-只有当基础设施检查和代码测试通过，且状态文件已同步，相关执行切片才可以标记为 `completed`。
+Work is not complete until required gates pass or an explicit substitute verification is recorded with remaining risk.
+
+## Test Evidence
+
+Test results should be recorded in `docs/ai/reports/TEST_REPORT.md` with command, result, date, and known limitations.

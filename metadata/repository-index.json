@@ -1,13 +1,9 @@
 {
-  "name": "vibe-coding-prompt",
-  "kind": "vibe-coding-infrastructure",
-  "prompt": "prompt.md",
-  "origin": "origin_prompt.md",
-  "agent_rules": "AGENTS.md",
-  "human_docs": "docs/",
-  "agent_state": "docs/ai/",
-  "schemas": "schemas/",
-  "cli_package": "vibe_coding_infra",
+  "name": "vibe-coding-infra",
+  "contract": "root_agent_contract",
+  "state": "docs/ai/state/status.json",
+  "execution_slices": "docs/ai/tasks/execution_slices.json",
+  "knowledge_index": "docs/ai/knowledge/knowledge_index.json",
   "quality_gates": [
     "python -m vibe_coding_infra check",
     "python -m unittest discover -s tests"

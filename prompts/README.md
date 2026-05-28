@@ -1,10 +1,10 @@
-# Prompts
+# Contract Workspace
 
-The root `prompt.md` is the authoritative standard prompt generated from `origin_prompt.md`.
+This directory is reserved for optional contract variants, experiments, and migration notes.
 
-Use this directory for future prompt variants only when they have:
+Rules:
 
-- a version
-- a migration note
-- a coverage trace back to `origin_prompt.md`
-- a decision record in `docs/ai/decisions/DECISIONS.md`
+1. The root agent contract remains authoritative unless a developer explicitly approves a replacement.
+2. Draft variants must be labeled as drafts.
+3. Changes that affect agency, confirmation boundaries, safety rules, state schema, or knowledge-source behavior require decision records.
+4. Draft content must not include source-tracing markers or external reference explanations.

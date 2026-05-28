@@ -5,12 +5,16 @@ from typing import Iterable
 
 from .io import read_json, read_text
 from .models import (
-    Finding,
+    CONTRACT_NAME,
+    GENERATED_SCAN_PATHS,
+    REQUIRED_CONTRACT_TERMS,
     REQUIRED_PATHS,
     REQUIRED_REQUIREMENT_FIELDS,
     REQUIRED_RESEARCH_FIELDS,
     REQUIRED_SLICE_FIELDS,
     REQUIRED_STATUS_FIELDS,
+    TRACE_MARKERS,
+    Finding,
 )
 
 
@@ -25,16 +29,16 @@ def _check_collection(
     required_fields: Iterable[str],
 ) -> list[Finding]:
     full_path = root / path
-    findings: list[Finding] = []
     try:
         data = read_json(full_path)
-    except Exception as exc:  # noqa: BLE001 - CLI should report parse errors cleanly.
+    except Exception as exc:  # noqa: BLE001 - CLI should report parse errors.
         return [Finding("error", full_path, f"cannot read JSON: {exc}")]
 
     items = data.get(collection_key)
     if not isinstance(items, list):
         return [Finding("error", full_path, f"missing list field `{collection_key}`")]
 
+    findings: list[Finding] = []
     seen: set[str] = set()
     for index, item in enumerate(items):
         if not isinstance(item, dict):
@@ -52,6 +56,30 @@ def _check_collection(
     return findings
 
 
+def _iter_generated_files(root: Path) -> Iterable[Path]:
+    for relative in GENERATED_SCAN_PATHS:
+        path = root / relative
+        if not path.exists():
+            continue
+        if path.is_file():
+            yield path
+        else:
+            yield from (item for item in path.rglob("*") if item.is_file() and ".git" not in item.parts)
+
+
+def _check_trace_markers(root: Path) -> list[Finding]:
+    findings: list[Finding] = []
+    for path in _iter_generated_files(root):
+        try:
+            text = read_text(path)
+        except UnicodeDecodeError:
+            continue
+        for marker in TRACE_MARKERS:
+            if marker and marker in text:
+                findings.append(Finding("error", path, f"contains trace marker `{marker}`"))
+    return findings
+
+
 def check_repository(root: Path) -> list[Finding]:
     findings: list[Finding] = []
 
@@ -62,27 +90,12 @@ def check_repository(root: Path) -> list[Finding]:
         elif path.is_file() and path.stat().st_size == 0:
             findings.append(Finding("error", path, "required file is empty"))
 
-    prompt = root / "prompt.md"
-    if prompt.exists():
-        text = read_text(prompt)
-        required_terms = (
-            "代理行动权",
-            "执行切片",
-            "需求台账",
-            "搜索研究",
-            "质量门禁",
-            "专属编程知识库",
-            "可检索增强",
-            "Single Source of Truth",
-            "向量数据库",
-            "全文索引",
-            "检索 API",
-            "智能问答入口",
-            "知识条目导入流水线",
-        )
-        for term in required_terms:
+    contract = root / CONTRACT_NAME
+    if contract.exists():
+        text = read_text(contract)
+        for term in REQUIRED_CONTRACT_TERMS:
             if term not in text:
-                findings.append(Finding("error", prompt, f"missing required prompt term `{term}`"))
+                findings.append(Finding("error", contract, f"missing required contract term `{term}`"))
 
     findings.extend(
         _check_collection(
@@ -116,4 +129,5 @@ def check_repository(root: Path) -> list[Finding]:
             REQUIRED_STATUS_FIELDS,
         )
     )
+    findings.extend(_check_trace_markers(root))
     return findings

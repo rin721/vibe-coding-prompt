@@ -1,34 +1,39 @@
 {
-  "$schema": "../../../schemas/decisions.schema.json",
   "decisions": [
     {
       "id": "DEC-0001",
-      "title": "Use Python standard library for the CLI",
+      "decision": "Use Python standard library for baseline CLI and knowledge tooling.",
       "status": "accepted",
-      "context": "The repository needs a portable quality gate without dependency installation risk.",
-      "decision": "Implement vibe_coding_infra with Python standard library only.",
-      "consequences": ["Simpler setup", "Manual validation instead of external jsonschema dependency"],
+      "context": "The baseline infrastructure should run without dependency installation.",
+      "consequences": ["Lower setup cost", "Simpler CI", "Limited advanced search quality"],
       "evidence": ["pyproject.toml", "vibe_coding_infra/"],
       "updated_at": "2026-05-28"
     },
     {
-      "id": "DEC-0004",
-      "title": "Add Knowledge Base/RAG as product-grade infrastructure",
+      "id": "DEC-0002",
+      "decision": "Keep Markdown for humans and JSON for machine validation.",
       "status": "accepted",
-      "context": "The new user goal requires origin_prompt.md to define a dedicated Vibe Coding programming knowledge base as an independent searchable, question-answerable, retrieval-augmented platform and Single Source of Truth.",
-      "decision": "Integrate the Knowledge Base/RAG mechanism into origin_prompt.md while preserving existing safety, confirmation, evidence, and execution-slice semantics.",
-      "consequences": ["The final prompt generation path must include the knowledge base platform in the infrastructure panorama.", "Knowledge base facts must remain traceable and must not bypass P0/P1 governance."],
-      "evidence": ["REQ-0005", "origin_prompt.md"],
+      "context": "Agents and humans need the same state in readable and parseable forms.",
+      "consequences": ["Dual maintenance required", "Validation catches missing fields"],
+      "evidence": ["docs/ai/*/*.json", "schemas/"],
       "updated_at": "2026-05-28"
     },
     {
-      "id": "DEC-0005",
-      "title": "Implement a standard-library Knowledge Base/RAG core",
+      "id": "DEC-0003",
+      "decision": "Use execution slices as the central unit for controlled agent work.",
       "status": "accepted",
-      "context": "REQ-0006 requires the final prompt and generated infrastructure to express the dedicated Vibe Coding programming knowledge base as searchable, question-answerable, retrieval-augmented infrastructure.",
-      "decision": "Provide a local standard-library implementation for knowledge entry import, metadata validation, term-vector storage, full-text search, retrieval API helpers, and evidence-grounded answer payloads.",
-      "consequences": ["The repository remains dependency-light and immediately testable.", "The local engine is a core scaffold that can later be backed by a production vector database or search service without changing governance rules."],
-      "evidence": ["REQ-0006", "vibe_coding_infra/knowledge_base.py", "tests/test_knowledge_base.py"],
+      "context": "Agent activity needs a smallest recoverable and verifiable unit.",
+      "consequences": ["Clear authorization boundaries", "Requires state updates"],
+      "evidence": ["docs/ai/tasks/execution_slices.json"],
+      "updated_at": "2026-05-28"
+    },
+    {
+      "id": "DEC-0004",
+      "decision": "Implement a local knowledge base/RAG core before external services.",
+      "status": "accepted",
+      "context": "Baseline verification should not depend on external accounts or services.",
+      "consequences": ["Portable baseline", "Future adapter needed for production vector stores"],
+      "evidence": ["vibe_coding_infra/knowledge_base.py"],
       "updated_at": "2026-05-28"
     }
   ]

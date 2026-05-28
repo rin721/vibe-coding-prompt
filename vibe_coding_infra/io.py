@@ -5,17 +5,27 @@ from pathlib import Path
 from typing import Any
 
 
-def read_json(path: Path) -> Any:
-    with path.open("r", encoding="utf-8") as handle:
-        return json.load(handle)
+def project_root(start: Path | None = None) -> Path:
+    current = (start or Path.cwd()).resolve()
+    for candidate in (current, *current.parents):
+        if (candidate / ".git").exists() or (candidate / "pyproject.toml").exists():
+            return candidate
+    return current
 
 
 def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def ensure_repo_root(path: Path | None = None) -> Path:
-    root = (path or Path.cwd()).resolve()
-    if (root / "prompt.md").exists() and (root / "origin_prompt.md").exists():
-        return root
-    raise FileNotFoundError("not a Vibe Coding infrastructure repository root")
+def write_text(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8", newline="\n")
+
+
+def read_json(path: Path) -> Any:
+    return json.loads(read_text(path))
+
+
+def write_json(path: Path, data: Any) -> None:
+    rendered = json.dumps(data, ensure_ascii=False, indent=2)
+    write_text(path, rendered + "\n")

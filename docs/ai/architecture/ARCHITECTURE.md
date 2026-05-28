@@ -1,24 +1,15 @@
 # AI Architecture Notes
 
-## Current Mode
+## Current Structure
 
-`standard`
+- Human-facing architecture lives in `docs/ARCHITECTURE.md`.
+- Agent-facing state is split across requirements, decisions, tasks, status, reports, risks, knowledge, and handoff.
+- The local CLI validates required files and machine-readable fields.
+- The knowledge layer imports stable documentation and process state into a searchable evidence index.
 
-## Agency Level
+## Boundaries
 
-`controlled_execution` for documented low-risk repository generation and validation.
-
-## Modules
-
-- `prompt`: authoritative Agent prompt.
-- `docs`: human and Agent documentation.
-- `schemas`: machine-readable field contracts.
-- `knowledge_base`: dedicated Knowledge Base/RAG layer for import, search, retrieval, and evidence-grounded answer payloads.
-- `vibe_coding_infra`: local CLI for quality gates, next-step diagnosis, and knowledge base primitives.
-- `skills`: reusable project skill templates.
-
-## Quality Gates
-
-- `python -m vibe_coding_infra check`
-- `python -m vibe_coding_infra knowledge-search "执行切片"`
-- `python -m unittest discover -s tests`
+- Source files remain the audit record.
+- Knowledge answers must cite evidence.
+- Current execution slice boundaries control file edits and tool use.
+- High-risk operations require explicit confirmation.

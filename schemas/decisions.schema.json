@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Vibe Coding Decisions",
+  "title": "Decisions",
   "type": "object",
   "required": ["decisions"],
   "properties": {
@@ -8,7 +8,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "title", "status", "context", "decision", "consequences", "evidence", "updated_at"]
+        "required": ["id", "decision", "status", "context", "consequences", "evidence", "updated_at"]
       }
     }
   }

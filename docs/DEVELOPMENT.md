@@ -10,14 +10,24 @@
 ```powershell
 python -m vibe_coding_infra check
 python -m vibe_coding_infra next
+python -m vibe_coding_infra knowledge-import
 python -m vibe_coding_infra knowledge-search "执行切片"
+python -m vibe_coding_infra knowledge-answer "下一步之前要读取什么？"
 python -m unittest discover -s tests
 ```
 
 ## Change Rules
 
-- 修改 `origin_prompt.md` 需要开发者明确授权。
-- 修改 `prompt.md` 后必须运行基础设施检查。
-- 修改 `vibe_coding_infra/` 后必须运行单元测试。
-- 修改 `docs/ai/*` 后必须保持 JSON 与 Markdown 摘要一致。
-- 修改知识库/RAG 相关代码、schema 或文档后，必须验证 `knowledge-search` 或对应单元测试。
+- Read current state and execution slices before editing.
+- Keep Markdown summaries and JSON state aligned.
+- Update test evidence after running checks.
+- Update the knowledge index after stable documentation changes.
+- Do not add dependencies unless the current slice permits it and the risk is recorded.
+- Pause for destructive operations, secrets, sensitive data, production actions, permissions, payments, or database migrations.
+
+## Coding Style
+
+- Prefer simple standard-library Python.
+- Keep CLI output deterministic and easy to parse.
+- Use JSON for machine-readable state and Markdown for human-readable context.
+- Keep validation errors precise and actionable.

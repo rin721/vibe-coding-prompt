@@ -1,7 +1,18 @@
-# AI Knowledge Workspace
+# Knowledge Index
 
-This directory is reserved for generated or reviewed knowledge base artifacts.
+This directory stores the local knowledge index generated from stable repository sources.
 
-Source files in `docs/`, `docs/ai/*`, tests, decisions, and research notes remain the auditable sources. Knowledge indexes stored here are derived artifacts used for search, question answering, and retrieval-augmented context.
+The index is a baseline fact-access layer:
 
-Do not store secrets, private data, production logs, or unreviewed external material as stable knowledge entries.
+- Markdown and JSON files remain auditable sources.
+- Imported entries carry source paths, trust level, tags, and checksums.
+- Search combines keyword overlap and token-vector scoring.
+- Answers include citations and do not replace source review.
+
+Run:
+
+```powershell
+python -m vibe_coding_infra knowledge-import
+python -m vibe_coding_infra knowledge-search "质量门禁"
+python -m vibe_coding_infra knowledge-answer "当前下一步是什么？"
+```

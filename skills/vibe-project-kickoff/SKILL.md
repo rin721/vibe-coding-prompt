@@ -2,47 +2,29 @@
 
 ## Trigger
 
-Use when a developer gives a new project idea, a vague product goal, or asks to start a Vibe Coding workflow.
+Use when a developer introduces a new project idea, asks to start a Vibe Coding project, or needs to turn vague goals into a first engineering plan.
 
-## Purpose
+## Inputs
 
-Convert a vague idea into confirmed first-version requirements without overwhelming the developer.
-
-## Required Inputs
-
-- Developer's original goal
-- Current repository context, if any
-- `prompt.md`
-- `docs/ai/requirements/REQUIREMENT_LEDGER.md`
-
-## Boundaries
-
-- Do not write product code before requirement confirmation.
-- Ask at most `3-5` key questions per round.
-- Use ordinary language and options with impact notes.
+- Raw developer goal.
+- Any existing repository facts.
+- Known constraints, risks, and desired outcome.
 
 ## Steps
 
-1. Restate the goal in plain language.
-2. Classify the project type.
-3. Recommend light, standard, strict, or custom mode.
-4. Identify likely risks and non-goals.
-5. Record raw and normalized requirements.
-6. Ask the next `3-5` key questions.
-7. Wait for confirmation before architecture planning.
+1. Restate the idea in plain language.
+2. Identify project type, mode, architecture level, and agency level.
+3. Ask at most five key clarification questions.
+4. Record requirement candidates.
+5. Identify risks and explicit non-goals.
+6. Draft the first confirmed scope only after developer confirmation.
 
 ## Outputs
 
-- Updated requirement ledger
-- Pending confirmation list
-- Suggested mode and agency level
+- Requirement candidates.
+- Recommended mode and agency level.
+- First decision points.
 
-## Verification
+## Boundaries
 
-- Requirements have explicit status and evidence.
-- Developer can understand the options.
-- No code implementation has started.
-
-## Failure Handling
-
-If the idea is too vague, provide examples and choices. If risk is high, switch to strict confirmation flow.
+Do not start implementation until the minimum requirement threshold and authorization are clear.

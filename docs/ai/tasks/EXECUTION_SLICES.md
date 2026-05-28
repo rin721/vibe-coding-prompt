@@ -2,8 +2,6 @@
 
 | id | title | status | allowed files | verification |
 |---|---|---|---|---|
-| `SLICE-001` | Standard prompt finalization | `completed` | `prompt.md` | UTF-8 check, prompt term check |
-| `SLICE-002` | Infrastructure repository generation | `completed` | `README.md`, `AGENTS.md`, `docs/`, `schemas/`, `vibe_coding_infra/`, `scripts/`, `skills/`, `.github/` | infrastructure check |
-| `SLICE-003` | Quality gate verification | `completed` | `docs/ai/reports/TEST_REPORT.md`, status files | `python -m vibe_coding_infra check`, `python -m unittest discover -s tests` |
-| `SLICE-004` | Origin prompt Knowledge Base/RAG optimization | `completed` | `origin_prompt.md`, `docs/ai/requirements/`, `docs/ai/decisions/`, `docs/ai/tasks/`, `docs/ai/state/`, `docs/ai/reports/` | UTF-8 check, required KB/RAG term check, infrastructure check |
-| `SLICE-005` | Prompt and Knowledge Base/RAG infrastructure resync | `completed` | `prompt.md`, `README.md`, `docs/`, `schemas/`, `vibe_coding_infra/`, `tests/` | prompt KB/RAG term check, infrastructure check, unit tests |
+| `SLICE-001` | Clean contract finalization | `completed` | Root contract | UTF-8 read, required term check, trace scan |
+| `SLICE-002` | Infrastructure repository generation | `completed` | Documentation, schemas, tooling, tests, skills | Repository check |
+| `SLICE-003` | Quality gate verification | `completed` | Test report and status files | CLI check, unit tests, trace scan |

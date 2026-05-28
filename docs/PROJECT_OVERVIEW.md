@@ -1,27 +1,25 @@
 # Project Overview
 
-本项目是一套 Vibe Coding 基础设施：它把 `origin_prompt.md` 推导成标准版 `prompt.md`，再用该 prompt 建立可被 AI Agent 持续读取、执行和验证的工程仓库。
+This project is a Vibe Coding infrastructure package for agentic software delivery. It turns requirements, decisions, state, verification evidence, and reusable knowledge into files and checks that future agents can read without relying on chat memory.
 
 ## Goals
 
-- 让普通想法者能从模糊想法进入工程化协作。
-- 让 Agent 的代理行动权可校准、可审计、可暂停、可回滚、可收回。
-- 让需求、研究、架构、任务、执行切片、状态、证据和交接都落盘。
-- 提供最小 CLI 和 schema，帮助后续 Agent 检查仓库健康度并找到下一步。
-- 提供专属 Vibe Coding 编程知识库/RAG 本地核心，让稳定事实可搜索、可问答、可检索增强并可回溯证据。
+- Help non-specialist developers move from vague ideas to confirmed engineering scope.
+- Keep agency controlled, auditable, pausable, reversible, and recoverable.
+- Preserve requirements, research, decisions, tasks, execution slices, state, evidence, and handoff in repository files.
+- Provide local CLI checks so agents can validate the infrastructure before claiming completion.
+- Provide a dedicated programming knowledge base/RAG core with import, search, lightweight vector scoring, and evidence-backed answers.
 
 ## Non Goals
 
-- 不替代具体业务项目的需求确认。
-- 不承诺某个 AI 工具拥有无限自治。
-- 不机械复刻任何参考仓库目录。
+- It does not replace human decisions about product value, risk, or budget.
+- It does not grant agents unlimited autonomy.
+- It does not require every small task to use a heavy governance process.
 
-## Primary Artifacts
+## Primary Surfaces
 
-- `prompt.md`：Agent 行为规范。
-- `docs/ai/requirements/REQUIREMENT_LEDGER.md`：需求台账。
-- `docs/ai/tasks/EXECUTION_SLICES.md`：执行切片。
-- `docs/ai/state/STATUS.md`：当前状态。
-- `docs/KNOWLEDGE_BASE.md`：知识库/RAG 架构说明。
-- `schemas/knowledge-entry.schema.json`：知识条目 schema。
-- `vibe_coding_infra/`：校验、下一步诊断和知识库/RAG 本地核心代码。
+- Agent contract and local operating rules.
+- Human-facing documentation under `docs/`.
+- Agent-facing state and evidence under `docs/ai/`.
+- Local validation and knowledge tooling under `vibe_coding_infra/`.
+- Project-specific skills under `skills/`.

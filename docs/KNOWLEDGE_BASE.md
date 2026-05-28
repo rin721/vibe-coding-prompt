@@ -1,35 +1,28 @@
-# Knowledge Base / RAG Architecture
+# Knowledge Base And RAG
 
-The dedicated Vibe Coding programming knowledge base is a product-grade knowledge layer, not a synonym for `docs/` and not a chat memory.
+The dedicated programming knowledge base is a product-level infrastructure layer for Vibe Coding. It is not a plain documentation folder and not chat memory. It makes verified project facts discoverable, answerable, retrieval-augmented, and traceable.
 
-## Role
+## Capabilities
 
-- Make stable project facts searchable.
-- Return evidence-backed answers with source citations.
-- Provide retrieval-augmented context for agents, CLI tools, IDEs, and automation.
-- Preserve source-of-truth links back to `docs/`, `docs/ai/*`, Git history, tests, decisions, research notes, and developer confirmations.
+- **Full-text index** for exact terms, paths, command names, identifiers, and errors.
+- **Vector-style scoring** for related concepts and similar experience recall.
+- **Retrieval API** through local Python functions and CLI commands.
+- **Answer entry** that returns evidence-backed responses with citations.
+- **Import pipeline** that reads stable documentation and agent state files.
 
-## Local Core
+## Entry Lifecycle
 
-The current repository ships a standard-library local core in `vibe_coding_infra/knowledge_base.py`:
+1. Source collection.
+2. Trust-level labeling.
+3. Sensitive information scan.
+4. Prompt-injection risk scan.
+5. Metadata normalization.
+6. Chunking and tokenization.
+7. Full-text indexing.
+8. Lightweight vector scoring.
+9. Evidence answer generation.
+10. Feedback and deprecation handling.
 
-- Markdown import pipeline.
-- Knowledge entry schema.
-- Full-text index.
-- Lightweight term-vector store.
-- Retrieval helpers.
-- Evidence-grounded answer payload.
+## Trust Rules
 
-This local core is intentionally dependency-free. A future implementation can replace storage with a production vector database and search service while keeping the same governance boundaries.
-
-## Commands
-
-```powershell
-python -m vibe_coding_infra knowledge-build --output docs/ai/knowledge/knowledge_index.json
-python -m vibe_coding_infra knowledge-search "执行切片"
-python -m vibe_coding_infra knowledge-answer "下一步之前要读取什么？" --json
-```
-
-## Safety
-
-External material remains untrusted until reviewed. The import pipeline must preserve source path, trust level, status, evidence, and update time. Knowledge base answers never override P0 safety rules, developer confirmation, or the current legal execution slice.
+External content is untrusted until verified. Knowledge entries cannot override safety boundaries, developer confirmation, source files, or the current legal execution slice.

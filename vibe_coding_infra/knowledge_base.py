@@ -1,205 +1,236 @@
 from __future__ import annotations
 
-import json
+import hashlib
 import math
 import re
-from collections import Counter, defaultdict
-from dataclasses import asdict, dataclass, field
-from datetime import date
+from collections import Counter
+from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Iterable
 
-from .io import read_text
+from .io import read_json, read_text, write_json
+from .models import CONTRACT_NAME
 
 
-TOKEN_RE = re.compile(r"[\w.-]+", re.UNICODE)
+INDEX_PATH = Path("docs/ai/knowledge/knowledge_index.json")
+TOKEN_RE = re.compile(r"[A-Za-z0-9_./:-]+|[\u4e00-\u9fff]{1,4}")
+SENSITIVE_RE = re.compile(
+    r"(api[_-]?key|secret|token|password|private[_-]?key)\s*[:=]\s*['\"]?[A-Za-z0-9_\-]{8,}",
+    re.IGNORECASE,
+)
+INJECTION_RE = re.compile(
+    r"(ignore\s+previous|override\s+instructions|system\s+prompt|忽略.*之前.*指令|忽略.*以上.*指令|覆盖.*系统.*指令)",
+    re.IGNORECASE,
+)
 
 
 @dataclass(frozen=True)
 class KnowledgeEntry:
     id: str
+    source_path: str
     title: str
     body: str
-    source_path: str
-    source_type: str
     trust_level: str
-    status: str
-    tags: list[str] = field(default_factory=list)
-    evidence: list[str] = field(default_factory=list)
-    updated_at: str = field(default_factory=lambda: date.today().isoformat())
-    metadata: dict[str, Any] = field(default_factory=dict)
-
-    @classmethod
-    def from_mapping(cls, data: dict[str, Any]) -> "KnowledgeEntry":
-        return cls(
-            id=str(data["id"]),
-            title=str(data["title"]),
-            body=str(data["body"]),
-            source_path=str(data["source_path"]),
-            source_type=str(data["source_type"]),
-            trust_level=str(data["trust_level"]),
-            status=str(data["status"]),
-            tags=[str(item) for item in data.get("tags", [])],
-            evidence=[str(item) for item in data.get("evidence", [])],
-            updated_at=str(data.get("updated_at") or date.today().isoformat()),
-            metadata=dict(data.get("metadata", {})),
-        )
-
-    def to_mapping(self) -> dict[str, Any]:
-        return asdict(self)
+    tags: list[str]
+    checksum: str
+    updated_at: str
+    deprecated: bool = False
 
 
 def tokenize(text: str) -> list[str]:
-    return [match.group(0).lower() for match in TOKEN_RE.finditer(text)]
+    return [token.lower() for token in TOKEN_RE.findall(text)]
 
 
-def entry_vector(entry: KnowledgeEntry) -> Counter[str]:
-    vector: Counter[str] = Counter()
-    vector.update(tokenize(entry.body))
-    vector.update({token: count * 3 for token, count in Counter(tokenize(entry.title)).items()})
-    vector.update({token: count * 2 for token, count in Counter(tokenize(" ".join(entry.tags))).items()})
-    vector.update(tokenize(entry.source_path))
-    return vector
+def vectorize(text: str) -> Counter[str]:
+    return Counter(tokenize(text))
 
 
-def _cosine_score(query: Counter[str], document: Counter[str]) -> float:
-    shared = set(query) & set(document)
-    if not shared:
+def cosine(a: Counter[str], b: Counter[str]) -> float:
+    if not a or not b:
         return 0.0
-    numerator = sum(query[token] * document[token] for token in shared)
-    query_norm = math.sqrt(sum(value * value for value in query.values()))
-    document_norm = math.sqrt(sum(value * value for value in document.values()))
-    if query_norm == 0 or document_norm == 0:
+    common = set(a) & set(b)
+    numerator = sum(a[token] * b[token] for token in common)
+    a_norm = math.sqrt(sum(value * value for value in a.values()))
+    b_norm = math.sqrt(sum(value * value for value in b.values()))
+    if not a_norm or not b_norm:
         return 0.0
-    return numerator / (query_norm * document_norm)
+    return numerator / (a_norm * b_norm)
 
 
-def build_full_text_index(entries: Iterable[KnowledgeEntry]) -> dict[str, list[str]]:
-    postings: dict[str, set[str]] = defaultdict(set)
-    for entry in entries:
-        for token in entry_vector(entry):
-            postings[token].add(entry.id)
-    return {token: sorted(ids) for token, ids in sorted(postings.items())}
+def checksum(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def search_entries(entries: Iterable[KnowledgeEntry], query: str, limit: int = 5) -> list[dict[str, Any]]:
-    query_vector = Counter(tokenize(query))
-    ranked: list[dict[str, Any]] = []
-    for entry in entries:
-        vector = entry_vector(entry)
-        score = _cosine_score(query_vector, vector)
-        if score <= 0:
-            continue
-        ranked.append(
-            {
-                "entry": entry.to_mapping(),
-                "score": round(score, 6),
-                "matched_terms": sorted(set(query_vector) & set(vector)),
-            }
-        )
-    ranked.sort(key=lambda item: (-item["score"], item["entry"]["id"]))
-    return ranked[:limit]
+def default_source_paths(root: Path) -> list[Path]:
+    paths: list[Path] = []
+    for pattern in ("README.md", "AGENTS.md", CONTRACT_NAME, "docs/**/*.md", "skills/**/*.md"):
+        paths.extend(path for path in root.glob(pattern) if path.is_file())
+    return sorted(set(paths))
 
 
-def answer_question(entries: Iterable[KnowledgeEntry], question: str, limit: int = 3) -> dict[str, Any]:
-    results = search_entries(entries, question, limit=limit)
-    citations = [
-        {
-            "entry_id": item["entry"]["id"],
-            "title": item["entry"]["title"],
-            "source_path": item["entry"]["source_path"],
-            "evidence": item["entry"]["evidence"],
-            "score": item["score"],
-        }
-        for item in results
-    ]
-    if citations:
-        answer = "Found evidence-backed knowledge entries. Review citations before treating the answer as stable fact."
-    else:
-        answer = "No sufficient evidence found in the local knowledge base. Fall back to source files and record the gap."
-    return {
-        "question": question,
-        "answer": answer,
-        "citations": citations,
-        "results": results,
-    }
+def _title_for(path: Path, body: str) -> str:
+    for line in body.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("#"):
+            return stripped.lstrip("#").strip() or path.stem
+    return path.stem
 
 
-def import_markdown_paths(paths: Iterable[Path], root: Path) -> list[KnowledgeEntry]:
+def _tags_for(path: Path) -> list[str]:
+    parts = set(path.parts)
+    tags: list[str] = []
+    if "requirements" in parts:
+        tags.append("requirements")
+    if "research" in parts:
+        tags.append("research")
+    if "tasks" in parts:
+        tags.append("execution")
+    if "state" in parts:
+        tags.append("state")
+    if "knowledge" in parts:
+        tags.append("knowledge")
+    if "skills" in parts:
+        tags.append("skill")
+    if path.name == CONTRACT_NAME:
+        tags.append("contract")
+    return tags or ["documentation"]
+
+
+def _source_label(root: Path, path: Path) -> str:
+    rel = path.relative_to(root).as_posix()
+    if path.name == CONTRACT_NAME:
+        return "root_agent_contract"
+    return rel
+
+
+def _trust_for(path: Path, body: str) -> str:
+    if SENSITIVE_RE.search(body) or INJECTION_RE.search(body):
+        return "needs_review"
+    if "docs" in path.parts or path.name in {"README.md", "AGENTS.md", CONTRACT_NAME}:
+        return "high"
+    return "medium"
+
+
+def build_entries(root: Path, paths: Iterable[Path] | None = None) -> list[KnowledgeEntry]:
     entries: list[KnowledgeEntry] = []
-    for index, path in enumerate(sorted({item.resolve() for item in paths if item.exists() and item.is_file()}), start=1):
-        text = read_text(path)
-        title = _first_heading(text) or path.stem
-        relative = str(path.relative_to(root.resolve())).replace("\\", "/")
+    for path in paths or default_source_paths(root):
+        try:
+            body = read_text(path)
+        except UnicodeDecodeError:
+            continue
+        rel = _source_label(root, path)
+        digest = checksum(rel + "\n" + body)
         entries.append(
             KnowledgeEntry(
-                id=f"KB-{index:04d}",
-                title=title,
-                body=text,
-                source_path=relative,
-                source_type="markdown",
-                trust_level="primary_local_file",
-                status="candidate",
-                tags=_tags_for_path(relative),
-                evidence=[relative],
-                metadata={"import_pipeline": "markdown_local_files"},
+                id=f"KB-{digest[:12]}",
+                source_path=rel,
+                title=_title_for(path, body),
+                body=body,
+                trust_level=_trust_for(path, body),
+                tags=_tags_for(path),
+                checksum=digest,
+                updated_at="2026-05-28",
             )
         )
     return entries
 
 
-def build_repository_entries(root: Path) -> list[KnowledgeEntry]:
-    candidates: list[Path] = []
-    for pattern in ("README.md", "AGENTS.md", "prompt.md", "docs/**/*.md", "skills/**/*.md"):
-        candidates.extend(root.glob(pattern))
-    return import_markdown_paths(candidates, root)
+def save_index(root: Path, entries: list[KnowledgeEntry]) -> Path:
+    path = root / INDEX_PATH
+    payload = {"version": 1, "entries": [asdict(entry) for entry in entries]}
+    write_json(path, payload)
+    return path
 
 
-def build_index_payload(entries: Iterable[KnowledgeEntry]) -> dict[str, Any]:
-    entry_list = list(entries)
-    return {
-        "version": 1,
-        "generated_at": date.today().isoformat(),
-        "entries": [entry.to_mapping() for entry in entry_list],
-        "full_text_index": build_full_text_index(entry_list),
-        "vector_store": [
+def load_entries(root: Path) -> list[KnowledgeEntry]:
+    path = root / INDEX_PATH
+    if not path.exists():
+        return []
+    data = read_json(path)
+    raw_entries = data.get("entries", [])
+    entries: list[KnowledgeEntry] = []
+    for item in raw_entries:
+        if isinstance(item, dict):
+            entries.append(
+                KnowledgeEntry(
+                    id=str(item.get("id", "")),
+                    source_path=str(item.get("source_path", "")),
+                    title=str(item.get("title", "")),
+                    body=str(item.get("body", "")),
+                    trust_level=str(item.get("trust_level", "unverified")),
+                    tags=list(item.get("tags", [])),
+                    checksum=str(item.get("checksum", "")),
+                    updated_at=str(item.get("updated_at", "")),
+                    deprecated=bool(item.get("deprecated", False)),
+                )
+            )
+    return entries
+
+
+def import_knowledge(root: Path) -> list[KnowledgeEntry]:
+    entries = build_entries(root)
+    save_index(root, entries)
+    return entries
+
+
+def search(root: Path, query: str, limit: int = 5) -> list[dict[str, object]]:
+    entries = load_entries(root)
+    if not entries:
+        entries = import_knowledge(root)
+    query_tokens = set(tokenize(query))
+    query_vector = vectorize(query)
+    results: list[dict[str, object]] = []
+    for entry in entries:
+        if entry.deprecated:
+            continue
+        body_tokens = set(tokenize(entry.title + "\n" + entry.body))
+        keyword_score = len(query_tokens & body_tokens)
+        vector_score = cosine(query_vector, vectorize(entry.title + "\n" + entry.body))
+        score = keyword_score + vector_score
+        if score <= 0:
+            continue
+        snippet = _snippet(entry.body, query_tokens)
+        results.append(
             {
-                "entry_id": entry.id,
-                "weights": dict(entry_vector(entry)),
+                "id": entry.id,
+                "source_path": entry.source_path,
+                "title": entry.title,
+                "trust_level": entry.trust_level,
+                "tags": entry.tags,
+                "score": round(score, 4),
+                "snippet": snippet,
             }
-            for entry in entry_list
-        ],
-    }
+        )
+    results.sort(key=lambda item: (-float(item["score"]), str(item["source_path"])))
+    return results[:limit]
 
 
-def load_entries(path: Path) -> list[KnowledgeEntry]:
-    with path.open("r", encoding="utf-8") as handle:
-        data = json.load(handle)
-    raw_entries = data.get("entries")
-    if not isinstance(raw_entries, list):
-        raise ValueError("knowledge index missing list field `entries`")
-    return [KnowledgeEntry.from_mapping(item) for item in raw_entries if isinstance(item, dict)]
+def _snippet(body: str, query_tokens: set[str]) -> str:
+    lines = [line.strip() for line in body.splitlines() if line.strip()]
+    for line in lines:
+        lowered = line.lower()
+        if any(token in lowered for token in query_tokens):
+            return line[:240]
+    return (lines[0] if lines else "")[:240]
 
 
-def write_index(path: Path, entries: Iterable[KnowledgeEntry]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    payload = build_index_payload(entries)
-    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-
-
-def _first_heading(text: str) -> str | None:
-    for line in text.splitlines():
-        stripped = line.strip()
-        if stripped.startswith("#"):
-            return stripped.lstrip("#").strip() or None
-    return None
-
-
-def _tags_for_path(relative_path: str) -> list[str]:
-    parts = [part for part in Path(relative_path).parts if part not in {".", ""}]
-    tags = [part.removesuffix(".md").lower() for part in parts[:3]]
-    if relative_path.startswith("docs/ai/"):
-        tags.append("agent-state")
-    if relative_path == "prompt.md":
-        tags.append("prompt")
-    return sorted(set(tags))
+def answer(root: Path, question: str, limit: int = 3) -> dict[str, object]:
+    hits = search(root, question, limit=limit)
+    if not hits:
+        return {
+            "answer": "No indexed evidence was found. Rebuild the knowledge index or inspect source files directly.",
+            "citations": [],
+            "confidence": "low",
+        }
+    citations = [
+        {
+            "source_path": hit["source_path"],
+            "title": hit["title"],
+            "trust_level": hit["trust_level"],
+            "score": hit["score"],
+            "snippet": hit["snippet"],
+        }
+        for hit in hits
+    ]
+    answer_text = "The indexed evidence points to: " + " ".join(str(hit["snippet"]) for hit in hits[:2])
+    return {"answer": answer_text, "citations": citations, "confidence": "medium"}

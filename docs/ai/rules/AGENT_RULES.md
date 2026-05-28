@@ -1,12 +1,9 @@
-# Agent Rules
+# Agent Rules Summary
 
-权威规则来源是根目录 `prompt.md`。
-
-本摘要用于上下文恢复：
-
-1. 先读状态，再执行。
-2. 先确认需求，再规划。
-3. 先研究证据，再做依赖当前事实的技术选择。
-4. 只在当前执行切片授权范围内修改文件。
-5. 任何高风险动作先暂停确认。
-6. 所有完成判定必须有验证证据。
+1. Read current state before action.
+2. Confirm requirements before architecture.
+3. Research current facts before technical choices.
+4. Act only inside the current execution slice.
+5. Pause for high-risk operations.
+6. Record evidence for every completion claim.
+7. Keep knowledge answers traceable to source files.

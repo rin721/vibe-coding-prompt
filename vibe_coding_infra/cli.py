@@ -5,9 +5,9 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .io import ensure_repo_root
-from .knowledge_base import answer_question, build_repository_entries, search_entries, write_index
-from .state import choose_next_slice
+from .io import project_root
+from .knowledge_base import answer, import_knowledge, search
+from .state import next_summary
 from .validator import check_repository
 
 
@@ -16,120 +16,95 @@ def _print_json(data: Any) -> None:
 
 
 def cmd_check(args: argparse.Namespace) -> int:
-    root = ensure_repo_root(Path(args.root) if args.root else None)
+    root = project_root(Path(args.cwd) if args.cwd else None)
     findings = check_repository(root)
-    payload = {
-        "root": str(root),
-        "ok": not any(item.level == "error" for item in findings),
-        "findings": [item.render(root) for item in findings],
-    }
     if args.json:
-        _print_json(payload)
+        _print_json({"ok": not findings, "findings": [finding.render(root) for finding in findings]})
+    elif findings:
+        for finding in findings:
+            print(finding.render(root))
     else:
-        if payload["ok"]:
-            print("Vibe Coding infrastructure check passed.")
-        else:
-            print("Vibe Coding infrastructure check failed.")
-            for finding in findings:
-                print(finding.render(root))
-    return 0 if payload["ok"] else 1
+        print("ok")
+    return 1 if findings else 0
 
 
 def cmd_next(args: argparse.Namespace) -> int:
-    root = ensure_repo_root(Path(args.root) if args.root else None)
-    result = choose_next_slice(root)
+    root = project_root(Path(args.cwd) if args.cwd else None)
+    result = next_summary(root)
     if args.json:
         _print_json(result)
     else:
-        print(f"status: {result['status']}")
-        print(f"reason: {result['reason']}")
-        next_slice = result.get("next_slice")
-        if next_slice:
-            print(f"next_slice: {next_slice.get('id')} - {next_slice.get('title')}")
-            print(f"goal: {next_slice.get('goal')}")
-    return 0 if result["status"] in {"ready", "complete"} else 2
+        print(result["message"])
+        item = result.get("item")
+        if item:
+            print(f"id: {item.get('id')}")
+            print(f"status: {item.get('status')}")
+            print(f"next_condition: {item.get('next_condition')}")
+    return 0
 
 
-def cmd_knowledge_build(args: argparse.Namespace) -> int:
-    root = ensure_repo_root(Path(args.root) if args.root else None)
-    entries = build_repository_entries(root)
-    output = Path(args.output)
-    if not output.is_absolute():
-        output = root / output
-    write_index(output, entries)
-    payload = {
-        "root": str(root),
-        "output": str(output),
-        "entries": len(entries),
-    }
+def cmd_knowledge_import(args: argparse.Namespace) -> int:
+    root = project_root(Path(args.cwd) if args.cwd else None)
+    entries = import_knowledge(root)
     if args.json:
-        _print_json(payload)
+        _print_json({"entries": len(entries)})
     else:
-        print(f"Knowledge index written: {output}")
-        print(f"entries: {len(entries)}")
+        print(f"imported {len(entries)} entries")
     return 0
 
 
 def cmd_knowledge_search(args: argparse.Namespace) -> int:
-    root = ensure_repo_root(Path(args.root) if args.root else None)
-    entries = build_repository_entries(root)
-    payload = {
-        "query": args.query,
-        "results": search_entries(entries, args.query, limit=args.limit),
-    }
+    root = project_root(Path(args.cwd) if args.cwd else None)
+    results = search(root, args.query, limit=args.limit)
     if args.json:
-        _print_json(payload)
+        _print_json({"results": results})
     else:
-        for item in payload["results"]:
-            entry = item["entry"]
-            print(f"{entry['id']} score={item['score']} source={entry['source_path']}")
-            print(f"title: {entry['title']}")
-            print(f"matched_terms: {', '.join(item['matched_terms'])}")
+        for result in results:
+            print(f"{result['score']} {result['source_path']} :: {result['title']}")
+            print(f"  {result['snippet']}")
     return 0
 
 
 def cmd_knowledge_answer(args: argparse.Namespace) -> int:
-    root = ensure_repo_root(Path(args.root) if args.root else None)
-    entries = build_repository_entries(root)
-    payload = answer_question(entries, args.question, limit=args.limit)
+    root = project_root(Path(args.cwd) if args.cwd else None)
+    result = answer(root, args.question, limit=args.limit)
     if args.json:
-        _print_json(payload)
+        _print_json(result)
     else:
-        print(payload["answer"])
-        for citation in payload["citations"]:
-            print(f"- {citation['entry_id']} {citation['source_path']} score={citation['score']}")
+        print(result["answer"])
+        for citation in result["citations"]:
+            print(f"- {citation['source_path']} ({citation['trust_level']}, score={citation['score']})")
     return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="vibe-infra")
-    parser.add_argument("--root", help="Repository root. Defaults to current directory.")
+    parser.add_argument("--cwd", help="Repository root or child path")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    check_parser = subparsers.add_parser("check", help="Validate required files and machine-readable state.")
-    check_parser.add_argument("--json", action="store_true", help="Print JSON output.")
-    check_parser.set_defaults(func=cmd_check)
+    check = subparsers.add_parser("check", help="Validate repository infrastructure")
+    check.add_argument("--json", action="store_true")
+    check.set_defaults(func=cmd_check)
 
-    next_parser = subparsers.add_parser("next", help="Diagnose the next legal execution slice.")
-    next_parser.add_argument("--json", action="store_true", help="Print JSON output.")
-    next_parser.set_defaults(func=cmd_next)
+    next_cmd = subparsers.add_parser("next", help="Diagnose the next legal status item")
+    next_cmd.add_argument("--json", action="store_true")
+    next_cmd.set_defaults(func=cmd_next)
 
-    kb_build_parser = subparsers.add_parser("knowledge-build", help="Build a local knowledge index from repository Markdown files.")
-    kb_build_parser.add_argument("--output", default="docs/ai/knowledge/knowledge_index.json", help="Output JSON index path.")
-    kb_build_parser.add_argument("--json", action="store_true", help="Print JSON output.")
-    kb_build_parser.set_defaults(func=cmd_knowledge_build)
+    kb_import = subparsers.add_parser("knowledge-import", help="Build the local knowledge index")
+    kb_import.add_argument("--json", action="store_true")
+    kb_import.set_defaults(func=cmd_knowledge_import)
 
-    kb_search_parser = subparsers.add_parser("knowledge-search", help="Search local repository knowledge.")
-    kb_search_parser.add_argument("query", help="Search query.")
-    kb_search_parser.add_argument("--limit", type=int, default=5, help="Maximum result count.")
-    kb_search_parser.add_argument("--json", action="store_true", help="Print JSON output.")
-    kb_search_parser.set_defaults(func=cmd_knowledge_search)
+    kb_search = subparsers.add_parser("knowledge-search", help="Search the local knowledge index")
+    kb_search.add_argument("query")
+    kb_search.add_argument("--limit", type=int, default=5)
+    kb_search.add_argument("--json", action="store_true")
+    kb_search.set_defaults(func=cmd_knowledge_search)
 
-    kb_answer_parser = subparsers.add_parser("knowledge-answer", help="Return an evidence-grounded answer payload.")
-    kb_answer_parser.add_argument("question", help="Question to answer from local knowledge.")
-    kb_answer_parser.add_argument("--limit", type=int, default=3, help="Maximum citation count.")
-    kb_answer_parser.add_argument("--json", action="store_true", help="Print JSON output.")
-    kb_answer_parser.set_defaults(func=cmd_knowledge_answer)
+    kb_answer = subparsers.add_parser("knowledge-answer", help="Answer with indexed evidence")
+    kb_answer.add_argument("question")
+    kb_answer.add_argument("--limit", type=int, default=3)
+    kb_answer.add_argument("--json", action="store_true")
+    kb_answer.set_defaults(func=cmd_knowledge_answer)
 
     return parser
 
@@ -137,4 +112,4 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
-    return args.func(args)
+    return int(args.func(args))

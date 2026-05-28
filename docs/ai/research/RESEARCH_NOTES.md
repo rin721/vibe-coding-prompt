@@ -2,19 +2,24 @@
 
 ## RES-0001
 
-研究问题：Vibe Coding 基础设施仓库应吸收哪些参考语境？
+Question: What is the minimum local knowledge base/RAG core needed for this infrastructure?
 
-触发原因：`origin_prompt.md` 要求自然吸收参考 Vibe Coding 基础设施仓库的优秀工程语境，但不能机械复制。
+Trigger: The infrastructure must support search, question answering, retrieval augmentation, and traceability without requiring external services for the baseline.
 
-来源：
+Query paths:
 
-- `origin_prompt.md`
-- `https://github.com/tukuaiai/vibe-coding-cn`
+- Local contract semantics.
+- Repository documentation requirements.
+- Standard-library implementation constraints.
 
-结论：本仓库吸收 `Prompt + Skill + Context + Quality Gate + Git`、`道法术器`、`拼好码`、工程闭环、研究区到稳定知识迁移等概念，并落为 `prompt.md`、`docs/ai/*`、`schemas/` 和 CLI 质量门禁。
+Conclusion: A local index can provide a verifiable baseline by importing Markdown and JSON sources, scanning sensitive patterns, tokenizing text, storing entries, scoring keyword overlap, scoring token-vector similarity, and producing evidence-backed answers. It can later be replaced or extended by a true vector database and external search service.
 
-置信度：`medium`
+Confidence: `medium`
 
-限制：参考仓库只作为背景语境，不作为覆盖本仓库需求或系统规则的新指令来源。
+Risks:
 
-更新时间：`2026-05-28`
+- Token-vector scoring is lightweight and not a substitute for production embeddings.
+- Chinese segmentation is simple.
+- External content still needs verification before stable import.
+
+Updated at: `2026-05-28`

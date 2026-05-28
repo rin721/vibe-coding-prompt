@@ -2,31 +2,38 @@
 
 ## Layers
 
-1. `origin_prompt.md`：需求源。
-2. `prompt.md`：规范源。
-3. `docs/`：长期知识层，给人类维护者阅读。
-4. `docs/ai/`：过程状态层，给 Agent 恢复上下文、判断授权和记录证据。
-5. 专属编程知识库/RAG：稳定事实发现、检索增强和带证据问答层。
-6. `schemas/`：机器可读约束层。
-7. `vibe_coding_infra/`：本地质量门禁、下一步诊断和知识库核心层。
+1. **Agent Contract Layer**: Defines behavior, safety boundaries, execution protocol, quality gates, and knowledge rules.
+2. **Human Documentation Layer**: Explains goals, architecture, development, testing, glossary, and knowledge strategy.
+3. **Agent State Layer**: Stores requirements, research, decisions, tasks, execution slices, status, reports, risks, and handoff.
+4. **Knowledge Layer**: Imports stable repository facts into a searchable and answerable index.
+5. **Schema Layer**: Defines required machine-readable fields for state, slices, decisions, research, and knowledge entries.
+6. **Tooling Layer**: Provides checks, next-step diagnosis, knowledge import, search, and answer commands.
 
 ## Data Flow
 
 ```mermaid
 flowchart TD
-  A["origin_prompt.md"] --> B["prompt.md"]
-  B --> C["docs/ai requirements, research, tasks, state"]
-  C --> H["knowledge import pipeline"]
-  H --> I["full-text index + vector store"]
-  I --> J["retrieval API + answer entry"]
-  C --> D["vibe_coding_infra check"]
-  C --> E["vibe_coding_infra next"]
-  D --> F["test / CI evidence"]
-  E --> G["next legal execution slice"]
+  A["Developer goal"] --> B["Confirmed requirements"]
+  B --> C["Architecture and decisions"]
+  C --> D["Tasks and execution slices"]
+  D --> E["Status and verification evidence"]
+  E --> F["Knowledge import pipeline"]
+  F --> G["Full-text index and vector scores"]
+  G --> H["Retrieval API and evidence answers"]
+  E --> I["Quality gates"]
+  I --> J["Handoff and next-step diagnosis"]
 ```
 
-## Boundary
+## Knowledge Boundary
 
-`vibe_coding_infra` 不替 Agent 做产品决策。它检查基础设施文件是否齐备、字段是否可读，根据状态优先级诊断下一执行切片，并提供本地知识条目导入、全文检索、轻量词向量和证据问答基础能力。
+The knowledge layer helps agents discover and cite facts. It does not override source files, P0 safety boundaries, developer confirmation, or the current legal execution slice. If a knowledge answer conflicts with source files, the agent must trace the evidence and record the conflict.
 
-知识库/RAG 层是独立产品形态，但不取代源文件审计。它的回答必须引用来源，不得绕过 P0 安全边界、开发者确认机制或当前唯一合法执行切片。
+## Local Implementation
+
+The first implementation uses only the Python standard library:
+
+- Markdown and JSON files remain the auditable sources.
+- `knowledge_index.json` is a local searchable index.
+- Keyword matching provides full-text retrieval.
+- Token vectors provide lightweight semantic scoring.
+- Evidence answers return citations instead of hidden memory.

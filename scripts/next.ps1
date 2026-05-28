@@ -1,5 +1,1 @@
-param(
-  [string]$Root = "."
-)
-
-python -m vibe_coding_infra --root $Root next
+python -m vibe_coding_infra next

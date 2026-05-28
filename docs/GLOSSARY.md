@@ -1,9 +1,11 @@
 # Glossary
 
-- `代理行动权`：开发者委派给 Agent 的受控工程行动权。
-- `执行切片`：Agent 单次推进的最小可验证闭环。
-- `需求台账`：记录需求来源、状态、冲突、证据和去向的文件。
-- `质量门禁`：把自然语言验收转换成可执行检查的机制。
-- `下一步协议`：开发者发送“下一步”时，Agent 先恢复状态再选择唯一合法执行切片。
-- `专属编程知识库 / RAG 基建`：把稳定事实、证据、决策、研究和经验转成可搜索、可问答、可检索增强的知识层，并回溯到源文件。
-- `知识条目导入流水线`：把 `docs/`、`docs/ai/*`、测试报告、研究记录和人工确认结果转换为可检索知识条目的流程。
+| Term | Meaning |
+|---|---|
+| Agency | Controlled engineering authority delegated by the developer. |
+| Execution slice | The smallest independently verifiable unit of agent work. |
+| Quality gate | A check that turns acceptance into evidence, such as tests, schema validation, or review. |
+| Requirement ledger | Traceable record of raw input, normalized requirement, status, decision, evidence, and next action. |
+| Knowledge base | Searchable and answerable fact layer built from verified project evidence. |
+| RAG | Retrieval-augmented generation: using retrieved evidence to support answers and implementation. |
+| Handoff | Concise record that allows the next agent to resume safely. |

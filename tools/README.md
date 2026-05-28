@@ -1,9 +1,9 @@
 # Tools
 
-Tooling is intentionally minimal.
+This directory is reserved for small helper tools that support validation, import, migration, or reporting.
 
-- `vibe_coding_infra check` validates required files and machine-readable state fields.
-- `vibe_coding_infra next` diagnoses the next legal execution slice.
-- `scripts/check.ps1` and `scripts/next.ps1` are PowerShell wrappers.
+Before adding a tool:
 
-Do not add new dependencies unless a decision record explains why the standard library is insufficient.
+1. Confirm it belongs to the current execution slice.
+2. Record its purpose and verification path.
+3. Avoid hidden network calls, secrets, or destructive behavior.

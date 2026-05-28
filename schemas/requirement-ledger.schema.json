@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Vibe Coding Requirement Ledger",
+  "title": "Requirement Ledger",
   "type": "object",
   "required": ["requirements"],
   "properties": {
@@ -22,22 +22,7 @@
           "evidence",
           "next_action",
           "updated_at"
-        ],
-        "properties": {
-          "id": { "type": "string" },
-          "source": { "type": "string" },
-          "raw_text": { "type": "string" },
-          "normalized_text": { "type": "string" },
-          "type": { "type": "string" },
-          "priority_or_version": { "type": "string" },
-          "status": { "type": "string" },
-          "decision": { "type": "string" },
-          "related_slice": { "type": "array", "items": { "type": "string" } },
-          "conflicts": { "type": "array", "items": { "type": "string" } },
-          "evidence": { "type": "array", "items": { "type": "string" } },
-          "next_action": { "type": "string" },
-          "updated_at": { "type": "string" }
-        }
+        ]
       }
     }
   }

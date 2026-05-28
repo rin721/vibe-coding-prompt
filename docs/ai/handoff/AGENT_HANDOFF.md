@@ -2,7 +2,7 @@
 
 ## Current Summary
 
-The repository is a Vibe Coding infrastructure package. The key authority files are `origin_prompt.md`, `prompt.md`, and `AGENTS.md`. `prompt.md` has been resynced with the optimized Knowledge Base/RAG requirements, and the repository now includes a local dedicated knowledge base core.
+The repository contains a clean Vibe Coding agent contract and a baseline infrastructure package with documentation, state files, schemas, CLI tooling, knowledge base/RAG core, skills, and tests.
 
 ## Current Mode
 
@@ -14,21 +14,24 @@ The repository is a Vibe Coding infrastructure package. The key authority files 
 
 ## Current Slice
 
-No active slice. `SLICE-001` through `SLICE-005` are completed.
+No active slice remains. `SLICE-001` through `SLICE-003` are completed.
 
 ## Quality Gates
 
 ```powershell
 python -m vibe_coding_infra check
-python -m vibe_coding_infra knowledge-search "执行切片"
 python -m unittest discover -s tests
+python -m vibe_coding_infra knowledge-import
+python -m vibe_coding_infra knowledge-search "执行切片" --limit 2
+python -m vibe_coding_infra knowledge-answer "下一步之前要读取什么？" --limit 2
 ```
 
-Latest result: infrastructure check, knowledge search smoke check, knowledge answer smoke check, and `5` unit tests passed with the Codex bundled Python runtime.
+Latest result: repository check, unit tests, knowledge import, knowledge search, knowledge answer, and trace scan passed.
 
 ## Forbidden Without Confirmation
 
-- Editing `origin_prompt.md`
-- Destructive git operations
-- Installing dependencies
-- Skipping failed quality gates
+- Destructive git operations.
+- Dependency installation.
+- Production changes.
+- Secrets or sensitive data access.
+- Skipping failed quality gates.

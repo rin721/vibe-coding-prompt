@@ -1,31 +1,32 @@
 {
-  "$schema": "../../../schemas/research-notes.schema.json",
   "research_notes": [
     {
       "id": "RES-0001",
-      "question": "Which Vibe Coding infrastructure concepts should this repository absorb?",
-      "trigger": "origin_prompt.md requires absorbing reference repository context without mechanical copying.",
-      "query_paths": ["origin_prompt.md", "https://github.com/tukuaiai/vibe-coding-cn"],
+      "question": "What is the minimum local knowledge base/RAG core needed for this infrastructure?",
+      "trigger": "The infrastructure must support search, question answering, retrieval augmentation, and traceability without requiring external services for the baseline.",
+      "query_paths": ["local_contract", "repository_docs", "standard_library"],
       "sources": [
         {
-          "title": "origin_prompt.md",
-          "url_or_path": "origin_prompt.md",
-          "trust_level": "primary"
+          "title": "Local agent contract semantics",
+          "type": "local",
+          "trust_level": "high"
         },
         {
-          "title": "Vibe Coding infrastructure reference repository",
-          "url_or_path": "https://github.com/tukuaiai/vibe-coding-cn",
-          "trust_level": "community"
+          "title": "Repository documentation requirements",
+          "type": "local",
+          "trust_level": "high"
         }
       ],
       "key_evidence": [
-        "Prompt + Skill + Context + Quality Gate + Git is the organizing concept.",
-        "Research output must remain evidence, not instruction authority."
+        "A baseline can be implemented with Markdown and JSON import, tokenization, simple full-text scoring, lightweight vector scoring, and citation output."
       ],
-      "conclusion": "Use the concepts as engineering context and implement local docs, state, schemas, and gates.",
+      "conclusion": "Use a local standard-library knowledge core as a verifiable baseline, with clear extension points for production vector search later.",
       "confidence": "medium",
-      "scope": "Prompt and infrastructure repository design.",
-      "risks": ["Reference repository may evolve; origin_prompt.md remains the local authority."],
+      "scope": "Baseline infrastructure repository",
+      "risks": [
+        "Lightweight token scoring is not production embedding search.",
+        "External content still needs verification before stable import."
+      ],
       "requires_developer_confirmation": false,
       "updated_at": "2026-05-28"
     }

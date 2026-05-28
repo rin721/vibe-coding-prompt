@@ -1,67 +1,20 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.local/vibe-coding/knowledge-entry.schema.json",
-  "title": "Vibe Coding Knowledge Entry",
+  "title": "Knowledge Entry",
   "type": "object",
-  "required": [
-    "id",
-    "title",
-    "body",
-    "source_path",
-    "source_type",
-    "trust_level",
-    "status",
-    "tags",
-    "evidence",
-    "updated_at"
-  ],
+  "required": ["id", "source_path", "title", "body", "trust_level", "tags", "checksum", "updated_at"],
   "properties": {
-    "id": {
-      "type": "string",
-      "pattern": "^KB-[0-9]{4,}$"
-    },
-    "title": {
-      "type": "string",
-      "minLength": 1
-    },
-    "body": {
-      "type": "string",
-      "minLength": 1
-    },
-    "source_path": {
-      "type": "string",
-      "minLength": 1
-    },
-    "source_type": {
-      "type": "string",
-      "enum": ["markdown", "code", "test_report", "decision", "research_note", "external_summary", "manual_confirmation"]
-    },
-    "trust_level": {
-      "type": "string",
-      "enum": ["primary_local_file", "developer_confirmed", "test_evidence", "official", "community", "unverified"]
-    },
-    "status": {
-      "type": "string",
-      "enum": ["candidate", "stable", "deprecated", "conflict", "blocked"]
-    },
+    "id": { "type": "string" },
+    "source_path": { "type": "string" },
+    "title": { "type": "string" },
+    "body": { "type": "string" },
+    "trust_level": { "type": "string" },
     "tags": {
       "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "items": { "type": "string" }
     },
-    "evidence": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "updated_at": {
-      "type": "string"
-    },
-    "metadata": {
-      "type": "object"
-    }
-  },
-  "additionalProperties": false
+    "checksum": { "type": "string" },
+    "updated_at": { "type": "string" },
+    "deprecated": { "type": "boolean" }
+  }
 }
