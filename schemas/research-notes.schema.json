@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Vibe Coding Research Notes",
+  "type": "object",
+  "required": ["research_notes"],
+  "properties": {
+    "research_notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "question",
+          "trigger",
+          "query_paths",
+          "sources",
+          "key_evidence",
+          "conclusion",
+          "confidence",
+          "scope",
+          "risks",
+          "requires_developer_confirmation",
+          "updated_at"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "question": { "type": "string" },
+          "trigger": { "type": "string" },
+          "query_paths": { "type": "array", "items": { "type": "string" } },
+          "sources": { "type": "array" },
+          "key_evidence": { "type": "array", "items": { "type": "string" } },
+          "conclusion": { "type": "string" },
+          "confidence": { "type": "string" },
+          "scope": { "type": "string" },
+          "risks": { "type": "array", "items": { "type": "string" } },
+          "requires_developer_confirmation": { "type": "boolean" },
+          "updated_at": { "type": "string" }
+        }
+      }
+    }
+  }
+}

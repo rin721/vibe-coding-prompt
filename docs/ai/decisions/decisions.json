@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../schemas/decisions.schema.json",
+  "decisions": [
+    {
+      "id": "DEC-0001",
+      "title": "Use Python standard library for the CLI",
+      "status": "accepted",
+      "context": "The repository needs a portable quality gate without dependency installation risk.",
+      "decision": "Implement vibe_coding_infra with Python standard library only.",
+      "consequences": ["Simpler setup", "Manual validation instead of external jsonschema dependency"],
+      "evidence": ["pyproject.toml", "vibe_coding_infra/"],
+      "updated_at": "2026-05-28"
+    }
+  ]
+}

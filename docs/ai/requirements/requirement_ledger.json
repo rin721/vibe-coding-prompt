@@ -1,0 +1,50 @@
+{
+  "$schema": "../../../schemas/requirement-ledger.schema.json",
+  "requirements": [
+    {
+      "id": "REQ-0001",
+      "source": "origin_prompt.md",
+      "raw_text": "严格基于优化定稿后的 origin_prompt.md，推导并生成标准版的 prompt.md。",
+      "normalized_text": "Generate and persist the standard prompt.md from origin_prompt.md.",
+      "type": "goal",
+      "priority_or_version": "P0/current_version",
+      "status": "confirmed",
+      "decision": "entered_baseline",
+      "related_slice": ["SLICE-001"],
+      "conflicts": [],
+      "evidence": ["origin_prompt.md", "prompt.md"],
+      "next_action": "keep prompt.md traceable to origin_prompt.md",
+      "updated_at": "2026-05-28"
+    },
+    {
+      "id": "REQ-0002",
+      "source": "user goal",
+      "raw_text": "自动指导生成并输出完整的 Vibe Coding 基础设施代码仓库。",
+      "normalized_text": "Generate the Vibe Coding infrastructure repository with core code, docs, schemas, state, and gates.",
+      "type": "goal",
+      "priority_or_version": "P0/current_version",
+      "status": "confirmed",
+      "decision": "entered_baseline",
+      "related_slice": ["SLICE-002", "SLICE-003"],
+      "conflicts": [],
+      "evidence": ["README.md", "vibe_coding_infra/", "docs/ai/"],
+      "next_action": "validate generated infrastructure",
+      "updated_at": "2026-05-28"
+    },
+    {
+      "id": "REQ-0003",
+      "source": "origin_prompt.md",
+      "raw_text": "必须包含搜索、深度分析与研究能力，并要求前期需求定稿主动调用。",
+      "normalized_text": "Include research evidence mechanisms in prompt and repository state.",
+      "type": "constraint",
+      "priority_or_version": "P1/current_version",
+      "status": "confirmed",
+      "decision": "entered_baseline",
+      "related_slice": ["SLICE-002"],
+      "conflicts": [],
+      "evidence": ["docs/ai/research/RESEARCH_NOTES.md", "prompt.md"],
+      "next_action": "keep research notes current for external facts",
+      "updated_at": "2026-05-28"
+    }
+  ]
+}

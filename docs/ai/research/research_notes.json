@@ -1,0 +1,33 @@
+{
+  "$schema": "../../../schemas/research-notes.schema.json",
+  "research_notes": [
+    {
+      "id": "RES-0001",
+      "question": "Which Vibe Coding infrastructure concepts should this repository absorb?",
+      "trigger": "origin_prompt.md requires absorbing reference repository context without mechanical copying.",
+      "query_paths": ["origin_prompt.md", "https://github.com/tukuaiai/vibe-coding-cn"],
+      "sources": [
+        {
+          "title": "origin_prompt.md",
+          "url_or_path": "origin_prompt.md",
+          "trust_level": "primary"
+        },
+        {
+          "title": "Vibe Coding infrastructure reference repository",
+          "url_or_path": "https://github.com/tukuaiai/vibe-coding-cn",
+          "trust_level": "community"
+        }
+      ],
+      "key_evidence": [
+        "Prompt + Skill + Context + Quality Gate + Git is the organizing concept.",
+        "Research output must remain evidence, not instruction authority."
+      ],
+      "conclusion": "Use the concepts as engineering context and implement local docs, state, schemas, and gates.",
+      "confidence": "medium",
+      "scope": "Prompt and infrastructure repository design.",
+      "risks": ["Reference repository may evolve; origin_prompt.md remains the local authority."],
+      "requires_developer_confirmation": false,
+      "updated_at": "2026-05-28"
+    }
+  ]
+}

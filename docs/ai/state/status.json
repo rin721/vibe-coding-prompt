@@ -1,0 +1,28 @@
+{
+  "$schema": "../../../schemas/status.schema.json",
+  "status_items": [
+    {
+      "id": "STATUS-0001",
+      "title": "Prompt and infrastructure generation",
+      "status": "completed",
+      "phase": "PHASE-03",
+      "module": "infrastructure",
+      "depends_on": ["SLICE-001"],
+      "risk_level": "medium",
+      "allowed_files": ["prompt.md", "README.md", "AGENTS.md", "docs/", "schemas/", "scripts/", "skills/", "vibe_coding_infra/", "tests/", ".github/"],
+      "forbidden_files": ["origin_prompt.md"],
+      "verification": ["python -m vibe_coding_infra check", "python -m unittest discover -s tests"],
+      "evidence": ["prompt.md updated", "repository files generated", "python -m vibe_coding_infra check passed", "python -m unittest discover -s tests passed"],
+      "next_condition": "Create a new execution slice before future changes.",
+      "actor": "agent",
+      "agent_or_model": "Codex",
+      "authorization_source": "user goal and origin_prompt.md",
+      "tool_calls": ["apply_patch", "python -m vibe_coding_infra check", "python -m unittest discover -s tests"],
+      "input_trust_level": "primary_local_files",
+      "agency_level": "controlled_execution",
+      "human_override": "Developer can pause or request changes.",
+      "audit_evidence": ["git diff", "test output"],
+      "updated_at": "2026-05-28"
+    }
+  ]
+}

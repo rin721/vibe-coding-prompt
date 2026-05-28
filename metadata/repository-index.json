@@ -1,0 +1,15 @@
+{
+  "name": "vibe-coding-prompt",
+  "kind": "vibe-coding-infrastructure",
+  "prompt": "prompt.md",
+  "origin": "origin_prompt.md",
+  "agent_rules": "AGENTS.md",
+  "human_docs": "docs/",
+  "agent_state": "docs/ai/",
+  "schemas": "schemas/",
+  "cli_package": "vibe_coding_infra",
+  "quality_gates": [
+    "python -m vibe_coding_infra check",
+    "python -m unittest discover -s tests"
+  ]
+}
