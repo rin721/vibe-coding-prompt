@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.local/vibe/requirement.json",
+  "title": "Requirement",
+  "type": "object",
+  "required": ["id", "source", "raw_text", "normalized_text", "type", "status", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "source": { "type": "string", "minLength": 1 },
+    "raw_text": { "type": "string" },
+    "normalized_text": { "type": "string" },
+    "type": {
+      "type": "string",
+      "enum": ["goal", "feature", "constraint", "risk", "acceptance", "non_goal", "decision"]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "confirmed",
+        "pending_confirmation",
+        "ai_inferred",
+        "research_pending",
+        "rejected",
+        "deferred",
+        "out_of_current_version",
+        "backlog",
+        "decision_required"
+      ]
+    },
+    "priority_or_version": { "type": "string" },
+    "decision": { "type": "string" },
+    "related_slice": { "type": "string" },
+    "conflicts": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "next_action": { "type": "string" },
+    "updated_at": { "type": "string" }
+  },
+  "additionalProperties": false
+}

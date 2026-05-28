@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.local/vibe/execution-slice.json",
+  "title": "ExecutionSlice",
+  "type": "object",
+  "required": ["id", "goal", "status", "authorization", "scope", "quality_gates", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "goal": { "type": "string", "minLength": 1 },
+    "status": {
+      "type": "string",
+      "enum": [
+        "not_started",
+        "in_progress",
+        "needs_verification",
+        "needs_acceptance",
+        "blocked",
+        "rework",
+        "done",
+        "skipped",
+        "archived"
+      ]
+    },
+    "authorization": {
+      "type": "object",
+      "required": ["level", "source"],
+      "properties": {
+        "level": { "type": "string" },
+        "source": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "scope": {
+      "type": "object",
+      "required": ["files", "commands", "non_goals"],
+      "properties": {
+        "files": { "type": "array", "items": { "type": "string" } },
+        "commands": { "type": "array", "items": { "type": "string" } },
+        "non_goals": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "risks": { "type": "array", "items": { "type": "string" } },
+    "quality_gates": { "type": "array", "items": { "type": "string" } },
+    "rollback": { "type": "string" },
+    "evidence": { "type": "array", "items": { "type": "object" } },
+    "next_action": { "type": "string" },
+    "updated_at": { "type": "string" }
+  },
+  "additionalProperties": false
+}
