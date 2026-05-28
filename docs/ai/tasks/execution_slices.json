@@ -78,6 +78,32 @@
       "status": "completed",
       "next_condition": "Repository delivery can be reported.",
       "updated_at": "2026-05-28"
+    },
+    {
+      "id": "SLICE-004",
+      "title": "Origin prompt Knowledge Base/RAG optimization",
+      "parent_task": "TASK-004",
+      "phase": "PHASE-04",
+      "module": "origin_prompt",
+      "goal": "Optimize origin_prompt.md to include the independent Vibe Coding programming Knowledge Base/RAG infrastructure mechanism without weakening existing semantics.",
+      "inputs": ["origin_prompt.md", "REQ-0005"],
+      "outputs": ["origin_prompt.md", "docs/ai/reports/TEST_REPORT.md", "docs/ai/state/STATUS.md", "docs/ai/state/status.json"],
+      "allowed_files": ["origin_prompt.md", "docs/ai/requirements/", "docs/ai/decisions/", "docs/ai/tasks/", "docs/ai/state/", "docs/ai/reports/"],
+      "forbidden_files": ["prompt.md", "vibe_coding_infra/", "tests/"],
+      "allowed_tools": ["apply_patch", "shell read", "python -m vibe_coding_infra check"],
+      "approval_required_for": ["editing prompt.md", "code changes", "destructive operations"],
+      "risk_level": "low",
+      "agency_level": "controlled_execution",
+      "verification": ["UTF-8 readable", "origin_prompt.md contains required Knowledge Base/RAG concepts", "python -m vibe_coding_infra check"],
+      "acceptance": ["origin_prompt.md reflects REQ-0005 and preserves existing governance semantics"],
+      "rollback_plan": "Review git diff and revert only this slice's edits if explicitly requested.",
+      "max_iterations": 3,
+      "max_retries": 3,
+      "audit_evidence": ["git diff -- origin_prompt.md docs/ai"],
+      "human_override": "Developer can replace or narrow the Knowledge Base/RAG requirement.",
+      "status": "completed",
+      "next_condition": "Future changes require a new requirement, decision record, and execution slice.",
+      "updated_at": "2026-05-28"
     }
   ]
 }

@@ -10,6 +10,16 @@
       "consequences": ["Simpler setup", "Manual validation instead of external jsonschema dependency"],
       "evidence": ["pyproject.toml", "vibe_coding_infra/"],
       "updated_at": "2026-05-28"
+    },
+    {
+      "id": "DEC-0004",
+      "title": "Add Knowledge Base/RAG as product-grade infrastructure",
+      "status": "accepted",
+      "context": "The new user goal requires origin_prompt.md to define a dedicated Vibe Coding programming knowledge base as an independent searchable, question-answerable, retrieval-augmented platform and Single Source of Truth.",
+      "decision": "Integrate the Knowledge Base/RAG mechanism into origin_prompt.md while preserving existing safety, confirmation, evidence, and execution-slice semantics.",
+      "consequences": ["The final prompt generation path must include the knowledge base platform in the infrastructure panorama.", "Knowledge base facts must remain traceable and must not bypass P0/P1 governance."],
+      "evidence": ["REQ-0005", "origin_prompt.md"],
+      "updated_at": "2026-05-28"
     }
   ]
 }

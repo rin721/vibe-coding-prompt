@@ -23,6 +23,29 @@
       "human_override": "Developer can pause or request changes.",
       "audit_evidence": ["git diff", "test output"],
       "updated_at": "2026-05-28"
+    },
+    {
+      "id": "STATUS-0002",
+      "title": "Origin prompt Knowledge Base/RAG optimization",
+      "status": "completed",
+      "phase": "PHASE-04",
+      "module": "origin_prompt",
+      "depends_on": ["SLICE-004"],
+      "risk_level": "low",
+      "allowed_files": ["origin_prompt.md", "docs/ai/requirements/", "docs/ai/decisions/", "docs/ai/tasks/", "docs/ai/state/", "docs/ai/reports/"],
+      "forbidden_files": ["prompt.md", "vibe_coding_infra/", "tests/"],
+      "verification": ["UTF-8 readable", "required Knowledge Base/RAG concepts present", "python -m vibe_coding_infra check"],
+      "evidence": ["REQ-0005", "DEC-0004", "SLICE-004", "origin_prompt.md term check passed", "python -m vibe_coding_infra check passed", "python -m unittest discover -s tests passed"],
+      "next_condition": "Future changes require a new requirement, decision record, and execution slice.",
+      "actor": "agent",
+      "agent_or_model": "Codex",
+      "authorization_source": "user goal and REQ-0005",
+      "tool_calls": ["apply_patch", "required term check", "python -m vibe_coding_infra check", "python -m unittest discover -s tests"],
+      "input_trust_level": "primary_local_files",
+      "agency_level": "controlled_execution",
+      "human_override": "Developer can pause or replace the requested optimization.",
+      "audit_evidence": ["git diff -- origin_prompt.md docs/ai", "docs/ai/reports/TEST_REPORT.md"],
+      "updated_at": "2026-05-28"
     }
   ]
 }

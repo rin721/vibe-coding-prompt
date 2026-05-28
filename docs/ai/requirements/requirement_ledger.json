@@ -45,6 +45,36 @@
       "evidence": ["docs/ai/research/RESEARCH_NOTES.md", "prompt.md"],
       "next_action": "keep research notes current for external facts",
       "updated_at": "2026-05-28"
+    },
+    {
+      "id": "REQ-0004",
+      "source": "origin_prompt.md",
+      "raw_text": "代理行动权必须可校准、可审计、可暂停、可回滚、可收回。",
+      "normalized_text": "Keep agent agency calibrated, auditable, pausable, rollback-capable, and revocable.",
+      "type": "constraint",
+      "priority_or_version": "P0/current_version",
+      "status": "confirmed",
+      "decision": "entered_baseline",
+      "related_slice": ["SLICE-001", "SLICE-002"],
+      "conflicts": [],
+      "evidence": ["AGENTS.md", "prompt.md"],
+      "next_action": "preserve agency boundaries in future prompt changes",
+      "updated_at": "2026-05-28"
+    },
+    {
+      "id": "REQ-0005",
+      "source": "user goal",
+      "raw_text": "在 origin_prompt.md 中引入并设定构建专属 Vibe Coding 编程知识库的机制，明确该知识库是独立产品形态、可搜索/可问答/可检索增强的基建平台、项目唯一事实来源，并自然融入向量数据库、全文索引、检索 API、智能问答入口、知识条目导入流水线。",
+      "normalized_text": "Add an independent Vibe Coding programming Knowledge Base/RAG platform mechanism to origin_prompt.md as searchable, question-answerable, retrieval-augmented infrastructure and the project Single Source of Truth.",
+      "type": "constraint",
+      "priority_or_version": "P0/current_version",
+      "status": "confirmed",
+      "decision": "enter_origin_prompt_optimization",
+      "related_slice": ["SLICE-004"],
+      "conflicts": [],
+      "evidence": ["origin_prompt.md", "docs/ai/tasks/EXECUTION_SLICES.md"],
+      "next_action": "optimize origin_prompt.md without weakening existing governance semantics",
+      "updated_at": "2026-05-28"
     }
   ]
 }
