@@ -65,7 +65,21 @@ def check_repository(root: Path) -> list[Finding]:
     prompt = root / "prompt.md"
     if prompt.exists():
         text = read_text(prompt)
-        required_terms = ("代理行动权", "执行切片", "需求台账", "搜索研究", "质量门禁")
+        required_terms = (
+            "代理行动权",
+            "执行切片",
+            "需求台账",
+            "搜索研究",
+            "质量门禁",
+            "专属编程知识库",
+            "可检索增强",
+            "Single Source of Truth",
+            "向量数据库",
+            "全文索引",
+            "检索 API",
+            "智能问答入口",
+            "知识条目导入流水线",
+        )
         for term in required_terms:
             if term not in text:
                 findings.append(Finding("error", prompt, f"missing required prompt term `{term}`"))

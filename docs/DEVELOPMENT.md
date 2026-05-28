@@ -10,6 +10,7 @@
 ```powershell
 python -m vibe_coding_infra check
 python -m vibe_coding_infra next
+python -m vibe_coding_infra knowledge-search "执行切片"
 python -m unittest discover -s tests
 ```
 
@@ -19,3 +20,4 @@ python -m unittest discover -s tests
 - 修改 `prompt.md` 后必须运行基础设施检查。
 - 修改 `vibe_coding_infra/` 后必须运行单元测试。
 - 修改 `docs/ai/*` 后必须保持 JSON 与 Markdown 摘要一致。
+- 修改知识库/RAG 相关代码、schema 或文档后，必须验证 `knowledge-search` 或对应单元测试。

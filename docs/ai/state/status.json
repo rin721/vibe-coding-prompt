@@ -46,6 +46,29 @@
       "human_override": "Developer can pause or replace the requested optimization.",
       "audit_evidence": ["git diff -- origin_prompt.md docs/ai", "docs/ai/reports/TEST_REPORT.md"],
       "updated_at": "2026-05-28"
+    },
+    {
+      "id": "STATUS-0003",
+      "title": "Prompt and Knowledge Base/RAG infrastructure resync",
+      "status": "completed",
+      "phase": "PHASE-05",
+      "module": "prompt_and_knowledge_infra",
+      "depends_on": ["SLICE-004"],
+      "risk_level": "medium",
+      "allowed_files": ["prompt.md", "README.md", "docs/", "schemas/", "vibe_coding_infra/", "tests/"],
+      "forbidden_files": ["origin_prompt.md"],
+      "verification": ["prompt contains required Knowledge Base/RAG terms", "python -m vibe_coding_infra check", "python -m unittest discover -s tests"],
+      "evidence": ["REQ-0006", "DEC-0005", "SLICE-005", "prompt.md Knowledge Base/RAG term check passed", "python -m vibe_coding_infra check passed", "python -m unittest discover -s tests passed", "knowledge-search smoke check passed", "knowledge-answer smoke check passed"],
+      "next_condition": "All current slices are complete. Future changes require a new requirement, decision record, and execution slice.",
+      "actor": "agent",
+      "agent_or_model": "Codex",
+      "authorization_source": "user goal, REQ-0006, and SLICE-005",
+      "tool_calls": ["apply_patch", "prompt term check", "python -m vibe_coding_infra check", "python -m unittest discover -s tests"],
+      "input_trust_level": "primary_local_files",
+      "agency_level": "controlled_execution",
+      "human_override": "Developer can pause or request a different Knowledge Base/RAG backend.",
+      "audit_evidence": ["git diff -- prompt.md README.md docs schemas vibe_coding_infra tests", "docs/ai/reports/TEST_REPORT.md"],
+      "updated_at": "2026-05-28"
     }
   ]
 }

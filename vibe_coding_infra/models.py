@@ -17,14 +17,17 @@ REQUIRED_PATHS = (
     "docs/ai/requirements/requirement_ledger.json",
     "docs/ai/research/RESEARCH_NOTES.md",
     "docs/ai/research/research_notes.json",
+    "docs/ai/knowledge/README.md",
     "docs/ai/tasks/EXECUTION_SLICES.md",
     "docs/ai/tasks/execution_slices.json",
     "docs/ai/state/STATUS.md",
     "docs/ai/state/status.json",
     "docs/ai/reports/TEST_REPORT.md",
     "docs/ai/handoff/AGENT_HANDOFF.md",
+    "docs/KNOWLEDGE_BASE.md",
     "schemas/requirement-ledger.schema.json",
     "schemas/execution-slices.schema.json",
+    "schemas/knowledge-entry.schema.json",
     "schemas/status.schema.json",
 )
 

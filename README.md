@@ -10,9 +10,10 @@
 - `docs/`：人类长期项目文档。
 - `docs/ai/`：AI Agent 运行状态、需求台账、研究记录、执行切片、测试证据和交接材料。
 - `schemas/`：机器可读状态文件的 JSON Schema。
-- `vibe_coding_infra/`：基础设施校验与下一步诊断 CLI。
+- `vibe_coding_infra/`：基础设施校验、下一步诊断和知识库/RAG 本地核心 CLI。
 - `skills/`：可复用项目专用 skill 示例。
 - `scripts/`：跨工具入口脚本。
+- `docs/KNOWLEDGE_BASE.md`：专属 Vibe Coding 编程知识库/RAG 架构说明。
 
 核心原则：
 
@@ -34,6 +35,14 @@ python -m vibe_coding_infra check
 python -m vibe_coding_infra next
 ```
 
+构建和查询本地知识库索引：
+
+```powershell
+python -m vibe_coding_infra knowledge-build --output docs/ai/knowledge/knowledge_index.json
+python -m vibe_coding_infra knowledge-search "执行切片"
+python -m vibe_coding_infra knowledge-answer "下一步之前要读取什么？"
+```
+
 运行测试：
 
 ```powershell
@@ -52,6 +61,8 @@ python -m unittest discover -s tests
 人类长期文档放在 `docs/`，用于理解项目、二次开发、维护和交接。
 
 AI 过程产物放在 `docs/ai/`，用于记录需求、状态、证据、失败、研究、执行切片和代理行动权。
+
+专属编程知识库/RAG 层通过 `vibe_coding_infra.knowledge_base` 从这些源文件导入候选知识条目，提供全文检索、轻量向量表示、检索 API 和带证据引用的问答 payload。知识库回答必须回溯源文件，不能覆盖 P0 安全边界、开发者确认或当前合法执行切片。
 
 ## 模式
 

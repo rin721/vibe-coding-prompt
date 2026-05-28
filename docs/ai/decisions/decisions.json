@@ -20,6 +20,16 @@
       "consequences": ["The final prompt generation path must include the knowledge base platform in the infrastructure panorama.", "Knowledge base facts must remain traceable and must not bypass P0/P1 governance."],
       "evidence": ["REQ-0005", "origin_prompt.md"],
       "updated_at": "2026-05-28"
+    },
+    {
+      "id": "DEC-0005",
+      "title": "Implement a standard-library Knowledge Base/RAG core",
+      "status": "accepted",
+      "context": "REQ-0006 requires the final prompt and generated infrastructure to express the dedicated Vibe Coding programming knowledge base as searchable, question-answerable, retrieval-augmented infrastructure.",
+      "decision": "Provide a local standard-library implementation for knowledge entry import, metadata validation, term-vector storage, full-text search, retrieval API helpers, and evidence-grounded answer payloads.",
+      "consequences": ["The repository remains dependency-light and immediately testable.", "The local engine is a core scaffold that can later be backed by a production vector database or search service without changing governance rules."],
+      "evidence": ["REQ-0006", "vibe_coding_infra/knowledge_base.py", "tests/test_knowledge_base.py"],
+      "updated_at": "2026-05-28"
     }
   ]
 }

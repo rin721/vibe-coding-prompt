@@ -3,6 +3,7 @@
 ## Quality Gates
 
 - `python -m vibe_coding_infra check`
+- `python -m vibe_coding_infra knowledge-search "执行切片"`
 - `python -m unittest discover -s tests`
 
 ## Evidence

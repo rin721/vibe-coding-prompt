@@ -23,7 +23,12 @@ class RepositoryValidationTests(unittest.TestCase):
     def test_missing_required_files_are_reported(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
-            (root / "prompt.md").write_text("代理行动权 执行切片 需求台账 搜索研究 质量门禁", encoding="utf-8")
+            (root / "prompt.md").write_text(
+                "代理行动权 执行切片 需求台账 搜索研究 质量门禁 专属编程知识库 "
+                "可检索增强 Single Source of Truth 向量数据库 全文索引 检索 API "
+                "智能问答入口 知识条目导入流水线",
+                encoding="utf-8",
+            )
             findings = check_repository(root)
             messages = [finding.message for finding in findings]
             self.assertIn("required file is missing", messages)

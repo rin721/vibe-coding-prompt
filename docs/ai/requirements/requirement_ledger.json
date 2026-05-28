@@ -75,6 +75,21 @@
       "evidence": ["origin_prompt.md", "docs/ai/tasks/EXECUTION_SLICES.md"],
       "next_action": "optimize origin_prompt.md without weakening existing governance semantics",
       "updated_at": "2026-05-28"
+    },
+    {
+      "id": "REQ-0006",
+      "source": "user goal",
+      "raw_text": "当且仅当阶段一的 origin_prompt.md 物理写入动作彻底完成且无误后，严格基于优化定稿后的 origin_prompt.md 生成 prompt.md，并基于 prompt.md 输出完整 Vibe Coding 基础设施代码仓库。",
+      "normalized_text": "After verified origin_prompt.md optimization, regenerate prompt.md and extend the infrastructure repository with Knowledge Base/RAG core capabilities.",
+      "type": "goal",
+      "priority_or_version": "P0/current_version",
+      "status": "confirmed",
+      "decision": "enter_prompt_and_infra_resync",
+      "related_slice": ["SLICE-005"],
+      "conflicts": [],
+      "evidence": ["origin_prompt.md", "prompt.md", "vibe_coding_infra/knowledge_base.py", "schemas/knowledge-entry.schema.json"],
+      "next_action": "complete SLICE-005 and verify prompt plus infrastructure gates",
+      "updated_at": "2026-05-28"
     }
   ]
 }

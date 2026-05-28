@@ -104,6 +104,32 @@
       "status": "completed",
       "next_condition": "Future changes require a new requirement, decision record, and execution slice.",
       "updated_at": "2026-05-28"
+    },
+    {
+      "id": "SLICE-005",
+      "title": "Prompt and Knowledge Base/RAG infrastructure resync",
+      "parent_task": "TASK-005",
+      "phase": "PHASE-05",
+      "module": "prompt_and_knowledge_infra",
+      "goal": "Regenerate prompt.md semantics from the optimized origin_prompt.md and extend the infrastructure repository with a dedicated Knowledge Base/RAG core scaffold.",
+      "inputs": ["origin_prompt.md", "REQ-0006", "DEC-0005"],
+      "outputs": ["prompt.md", "README.md", "docs/", "schemas/knowledge-entry.schema.json", "vibe_coding_infra/knowledge_base.py", "tests/test_knowledge_base.py"],
+      "allowed_files": ["prompt.md", "README.md", "docs/", "schemas/", "vibe_coding_infra/", "tests/"],
+      "forbidden_files": ["origin_prompt.md"],
+      "allowed_tools": ["apply_patch", "shell read", "prompt term check", "python -m vibe_coding_infra check", "python -m unittest discover -s tests"],
+      "approval_required_for": ["modifying origin_prompt.md", "destructive operations", "dependency installation", "production changes", "secrets or sensitive data access"],
+      "risk_level": "medium",
+      "agency_level": "controlled_execution",
+      "verification": ["prompt contains required Knowledge Base/RAG terms", "python -m vibe_coding_infra check", "python -m unittest discover -s tests"],
+      "acceptance": ["prompt.md reflects optimized origin_prompt.md Knowledge Base/RAG requirements", "infrastructure exposes local knowledge import, search, and evidence answer primitives", "tests and checks pass"],
+      "rollback_plan": "Review git diff and revert only SLICE-005 files if explicitly requested.",
+      "max_iterations": 3,
+      "max_retries": 3,
+      "audit_evidence": ["git diff -- prompt.md README.md docs schemas vibe_coding_infra tests", "docs/ai/reports/TEST_REPORT.md"],
+      "human_override": "Developer can narrow the Knowledge Base/RAG scaffold or request a different backend design.",
+      "status": "completed",
+      "next_condition": "All current slices are complete. Future changes require a new requirement, decision record, and execution slice.",
+      "updated_at": "2026-05-28"
     }
   ]
 }
